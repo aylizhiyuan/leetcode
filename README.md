@@ -134,12 +134,157 @@
 
 ## 算法分析 | 循环分析
 
+1. O(1)：如果一个函数(或一组语句)不包含循环，递归和调用任何其它非常数时间函数，则将其视为O(1)的时间复杂度
 
+例如下面循环就是O(1)
 
+        for(int i=1;i<=c;i++){
+            //some O(1) expressions
+        }
 
+2. O(n):时间如果循环变量递增/递减一个常数，则循环的复杂度被认为是O(n)
 
+        for(int i=1;i<=n;i+=c){
+            //some O(1) expressions
+        }
+        for(int i=n;i>0;i-=c){
+            //some O(1) expressions
+        }
 
+3. O(n^c):嵌套循环的时间复杂度等于最内层语句的执行次数
 
+例如，一下循环为O(n^2)的时间复杂度
 
+    for(int i=1;i<=n;i+=c){
+        for(in j=1;j<=n;j+=c){
+            //some O(1) expressions
+        }
+    }
+    for(int i=n;i>0;i+=c){
+        for(int j=i+1;j<=n;j+=c){
+            //some O(1) expressions
+        }
+    }
 
+4. O(logn)时间如果循环变量被分割/乘以恒定量，则将循环的复杂度视为O(logn)
+
+        for(int i=1;i<=n;i*=c){
+            //some O(1) expressions
+        }
+        for(int i=n;i>0;i/=c){
+            //some O(1) expressions
+        }
+
+5. O(loglogn)时间如果循环变量以指数规律减小/增加，则循环的复杂度为O(loglogn)
+
+        // Here c is a constant greater than 1   
+        for (int i = 2; i <=n; i = pow(i, c)) { 
+            // some O(1) expressions
+        }
+        //Here fun is sqrt or cuberoot or any other constant root
+        for (int i = n; i > 0; i = fun(i)) { 
+            // some O(1) expressions
+        }
+
+> 如何组合连续循环的时间复杂度？
+
+        for (int i = 1; i <=m; i += c) {  
+                // some O(1) expressions
+        }
+        for (int i = 1; i <=n; i += c) {
+                // some O(1) expressions
+        }
+        Time complexity of above code is O(m) + O(n) which is O(m+n)
+        If m == n, the time complexity becomes O(2n) which is O(n). 
+
+## 算法分析 | 递归分析
+
+在前一篇文章中，我们讨论了循环的分析。许多算法本质上是递归的。当我们分析它们时，我们得到时间复杂度的递归关系。我们得到的运行时间是大小为n的输入作为n的函数，以及较小大小的输入的运行时间。
+
+例如在“ 合并排序”中，为了对给定的数组进行排序，我们将其分成两半，并递归地重复两个进程。最后我们合并结果。合并排序的时间复杂度可以写为T（n）= 2T（n / 2）+ cn。还有很多其他算法，如二进制搜索，汉罗塔问题等。
+
+1. 替代方法：猜测解，然后使用数学归纳来证明猜测是正确的或者不正确
+
+        For example consider the recurrence T(n) = 2T(n/2) + n
+
+        We guess the solution as T(n) = O(nLogn). Now we use induction
+        to prove our guess.
+
+        We need to prove that T(n) <= cnLogn. We can assume that it is true
+        for values smaller than n.
+
+        T(n) = 2T(n/2) + n
+            <= cn/2Log(n/2) + n
+            =  cnLogn - cnLog2 + n
+            =  cnLogn - cn + n
+            <= cnLogn
+
+2. 重复树法：在这种方法中，我们绘制一个重复树，并计算每个级别的树所花费的时间。最后，我们总结了各级的工作。为了绘制递推树，我们从给定的复现开始，继续绘制，直到我们在各个层次之间找到一个模式。该图案通常是算术或几何系列
+
+            For example consider the recurrence relation 
+            T(n) = T(n/4) + T(n/2) + cn2
+
+                    cn2
+                    /      \
+                T(n/4)     T(n/2)
+
+            If we further break down the expression T(n/4) and T(n/2), 
+            we get following recursion tree.
+
+                            cn2
+                    /           \      
+                c(n2)/16      c(n2)/4
+                /      \          /     \
+            T(n/16)     T(n/8)  T(n/8)    T(n/4) 
+            Breaking down further gives us following
+                            cn2
+                        /            \      
+                c(n2)/16          c(n2)/4
+                /      \            /      \
+            c(n2)/256   c(n2)/64  c(n2)/64    c(n2)/16
+            /    \      /    \    /    \       /    \  
+
+            To know the value of T(n), we need to calculate sum of tree 
+            nodes level by level. If we sum the above tree level by level, 
+            we get the following series
+            T(n)  = c(n^2 + 5(n^2)/16 + 25(n^2)/256) + ....
+            The above series is geometrical progression with ratio 5/16.
+
+            To get an upper bound, we can sum the infinite series. 
+            We get the sum as (n2)/(1 - 5/16) which is O(n2)
+
+3. 主方法仅适用于一下类型的复现或可以转化为以下类型的重复
+
+        T(n) = aT(n/b) + f(n) where a >= 1 and b > 1
+
+有以下三种情况：
+
+1. 如果f（n）=Θ（n c）其中c <Log b a    则T（n）=Θ（n Log b a）
+
+2. 如果F（N）=Θ（n c）其中c =Log b a 则T（N）=Θ（NÇlog n）
+
+3. 如果F（N）=Θ（n c）其中c>=Log b a 则T（N）=Θ（f（n））
+
+主方法主要来源于递归树法。如果我们绘制T（n）= aT（n / b）+ f（n）的递归树，我们可以看到在根处完成的是f（n），所有叶子的都是Θ（n c） c是logba。而递归树的高度为Log bn .
+
+在递归树方法中，我们计算完成的总工作量。如果在叶子上完成的工作多数多，那么叶子是主要的部分，我们的结果就成为树叶上（情况1）。
+
+如果在叶子和根部的工作是渐进的，那么我们的结果就变成了高度乘以任何级别的工作（情况2）。
+
+如果在根处完成的工作是更多的，那么我们的结果就会在根上（情况3）。
+
+![](./images/Master-Theorem.jpg)
+
+使用主方法
+
+合并排序：T（n）= 2T（n / 2）+Θ（n）可以评估其时间复杂度的一些标准算法的示例。它属于情况2，其中c=1，Log b a=1.因此解为Θ（n Logn）
+
+二进制搜索：T（n）= T（n / 2）+Θ（1）。它也属于情况2，其中c=0且Log b a=0的情况下出现。因此解为Θ（Logn）
+
+注意：
+
+1）使用主定理可以解决形式T（n）= aT（n / b）+ f（n）的复现。给定的三例在他们之间有一些差距。例如，使用主方法不能求解重复T（n）= 2T（n / 2）+ n / Logn。
+
+2）情况2可以扩展为f（n）=Θ（ncLogkn）
+如果f（n）=Θ（ncLogkn）对于一些常数k> = 0，c = Logba，则T（n）=Θ（nc Log k+1 n）
 
