@@ -34,3 +34,35 @@ int main(){
     display(head);
     return 0;
 }
+line *initLine(line *head){
+    head = (line *)malloc(sizeof(line));
+    head->prev = NULL;
+    head->next = NULL;
+    head->data = 1;
+    line *list = head;
+    for(int i=2;i<=5;i++){
+        line *body = (line *)malloc(sizeof(line));
+        body->prev = NULL;
+        body->next = NULL;
+        body->data = i;
+        //开始赋值
+        list->next = body;
+        body->prev = list;
+        list = list->next;
+    }
+    return head;
+}
+line *insertLine(line *head,int data,int add){
+    
+}
+void display(line *head){
+    line * temp = head;
+    while(temp){
+        if(temp->next == NULL){
+            printf("%d\n",temp->data);
+        }else{
+            printf("%d->",temp->data);
+        }
+        temp = temp->next;
+    }
+}
