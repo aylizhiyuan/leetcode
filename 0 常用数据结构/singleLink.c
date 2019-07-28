@@ -5,6 +5,8 @@ typedef struct Link {
     struct Link *next; //指向下一个元素的指针
 }link;
 
+
+
 //初始化链表
 link * initLink();
 //链表插入元素
