@@ -7,7 +7,12 @@ struct ListNode {
 };
 //遍历链表，计算链表的长度
 int get_list_length(ListNode *head){
-
+    int len = 0;
+    while(head){
+        len++;
+        head = head->next;
+    }
+    return len;
 };
 //将指针向前移动至多出节点个数后面的位置
 ListNode *foward_long_list(int long_len,int short_len,ListNode *head){
