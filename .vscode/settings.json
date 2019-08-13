@@ -63,6 +63,7 @@
         "utility": "cpp",
         "vector": "cpp",
         "*.tcc": "cpp",
-        "hashtable": "cpp"
+        "hashtable": "cpp",
+        "iostream": "cpp"
     }
 }
