@@ -21,6 +21,10 @@ class Solution {
             if(!node){
                 return;
             }
+            //在刚一开始访问这个节点的时候就讲该节点的值累加
+            //累加的时候将值入栈,看一下这时候path_value的值是否满足了条件了
+            //否则就继续遍历左子树和右子树,遍历完成后,回到该节点的时候还未发现满足条件，则将
+            //当前的节点的数值不做累加
             path_value += node->val; //遍历一个节点就累加一下值
             path.push_back(node->val);//将累加的所有节点入栈
             if(!node->left && !node->right && path_value == sum){
@@ -29,6 +33,7 @@ class Solution {
             preorder(node->left,path_value,sum,path,result);
             preorder(node->right,path_value,sum,path,result);
             //在后续遍历到最终的叶子节点的时候
+            //每离开一个节点就将值不做累加
             path_value -= node->val;
             path.pop_back();
         }    
