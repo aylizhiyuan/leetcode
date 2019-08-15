@@ -26,10 +26,14 @@ class Solution {
             TreeNode *right = node->right;
             TreeNode *left_last = NULL;
             TreeNode *right_last = NULL;
+            //这个是先递归把二叉树的左子树练成一个链表
+            //
             if(left){
                 preorder(left,left_last);
                 node->left = NULL;
                 node->right = left;
+                //都是指针，赋值相当于将left_last的指针赋值给last，那么当last值发生变化的时候
+                //left_last也会发生变化，目的是为了指向左子树最后一个元素
                 last = left_last;
             }
             if(right){
