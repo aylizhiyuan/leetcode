@@ -42,7 +42,7 @@
 ----
 
 
-**GitBook 内容大纲**
+**内容大纲**
 
 1. [冒泡排序](1.bubbleSort.md)
 2. [选择排序](2.selectionSort.md)
