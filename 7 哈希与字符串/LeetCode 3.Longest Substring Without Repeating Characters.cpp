@@ -18,6 +18,7 @@ public:
 		    }
 		    else{
     			while(begin < i && char_map[s[i]] > 1){
+					//将hash中记录的之前的字符串出现的次数全部减1是为了重新统计
     				char_map[s[begin]]--;//这个不是很明白？
 		    		begin++;
 		    	}
