@@ -30,6 +30,7 @@ inline int max(int a, int b)
 /*
  Return which the root pointer(at a higher level) should point to
  */
+//右旋的操作，原因是左左造成了失衡
 AVL* RR_Rotate(AVL* k2)
 {
 	AVL* k1 = k2->lchild;
@@ -47,6 +48,7 @@ AVL* RR_Rotate(AVL* k2)
           /  \                /  \
          Y    Z              X    Y
  */
+//左旋的操作，原因是右右造成了失衡
 AVL* LL_Rotate(AVL* k2)
 {
 	AVL* k1 = k2->rchild;
@@ -71,6 +73,7 @@ AVL* LL_Rotate(AVL* k2)
 /*
  Return which the root pointer should point to
  */
+//先左旋后右旋，原因是左右造成了失衡
 AVL* LR_Rotate(AVL* k3)
 {
 	k3->lchild = LL_Rotate(k3->lchild);
@@ -87,6 +90,7 @@ AVL* LR_Rotate(AVL* k3)
        /  \                            /  \
       C    D                          D    B 
  */
+//先右后左，原因是右左造成了失衡
 AVL* RL_Rotate(AVL* k3)
 {
 	k3->rchild = RR_Rotate(k3->rchild);
@@ -110,18 +114,24 @@ AVL* Insert(AVL* root, KEY_TYPE key)
 		root->rchild = Insert(root->rchild, key);
 	
 	root->height = max(getHeight(root->lchild), getHeight(root->rchild)) + 1;
+	//左子树深度较深
 	if(getHeight(root->lchild) - getHeight(root->rchild) == 2)
 	{
 		if(key < root->lchild->key)
+			//失去平衡的情况是左左
 			root = RR_Rotate(root);
 		else
+			//失去平衡的情况是左右
 			root = LR_Rotate(root);
 	}
+	//右子树的深度较深
 	else if(getHeight(root->rchild) - getHeight(root->lchild) == 2)
 	{
+		//失去平衡的情况是右左
 		if(key < root->rchild->key)
 			root = RL_Rotate(root);
 		else
+			//失去平衡的情况是右右
 			root = LL_Rotate(root);
 	}
 	return root;

@@ -287,3 +287,4 @@
 
 2）情况2可以扩展为f（n）=Θ（ncLogkn）
 如果f（n）=Θ（ncLogkn）对于一些常数k> = 0，c = Logba，则T（n）=Θ（nc Log k+1 n）
+
