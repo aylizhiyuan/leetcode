@@ -18,7 +18,7 @@ public:
 		    }
 		    else{
     			while(begin < i && char_map[s[i]] > 1){
-    				char_map[s[begin]]--;
+    				char_map[s[begin]]--;//这个不是很明白？
 		    		begin++;
 		    	}
 		    	word = "";
