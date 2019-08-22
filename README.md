@@ -288,3 +288,83 @@
 2）情况2可以扩展为f（n）=Θ（ncLogkn）
 如果f（n）=Θ（ncLogkn）对于一些常数k> = 0，c = Logba，则T（n）=Θ（nc Log k+1 n）
 
+# 链表题
+
+## 1. 链表逆序 LeetCode 206. Reverse Linked List
+
+整体思路:遍历原链表，采用头插法的方式将原链表中的每一个节点插入到新创建的链表中
+
+        //传入一个链表，返回一个逆序的新的链表
+        ListNode *reverseList(ListNode *head){
+            ListNode *new_head = NULL;
+            while(head){
+                ListNode *next = head->next;
+                head->next = new_head;
+                new_head = head;
+                head = next;
+            }
+            return new_head;
+        }
+## 2. 链表逆序2 LeetCode 92. Reverse Linked List II
+
+整理思路:这次是链表的范围逆序，在给定的范围内逆序链表的一部分.思路是创建两个指针，一个指向逆序范围的开始，一个指向逆序范围的结束，同时逆序完成后要将逆序后的链表再直接跟原链表相连。
+
+要找到四个指针，一个是逆序段头结点的前驱，一个是逆序的头节点，一个是逆序的尾节点，最后一个是逆序段尾节点的后继，找到这四个指针即可利用链表逆序的第一种方法解题
+
+        ListNode* reverseBetween(ListNode*head,int m,int n){
+            ListNode *pre_head = NULL;
+            ListNode *next_head = NULL;
+            ListNode *new_head = NULL;//存放逆序的一段链表
+            //你会发现我们无需存储最后的后继，head会遍历到那个位置
+            //ListNode *end_head = NULL;
+            ListNode *result = head;//存放最终结果的链表
+            int change_len = n - m + 1;//步长
+            while(head && --m){
+                pre_head = head;//逆序的前驱
+                head = head->next;
+            }
+            next_head = head;//指向逆序的头节点
+            //下面开始找逆序的尾结点和逆序的后继
+            while(head && change_len--){
+                //head指向逆序的头结点
+                //我们在遍历的同时，进行逆序
+                ListNode *next = head->next;
+                head->next = new_head;
+                new_head = head;
+                head = next;
+            }
+            //逆序完成后,head指向逆序的后继,new_head变成了头节点，那么尾节点
+            //自然就是next_head,它从头节点变成了尾节点了
+            //最后我们来连接
+            next_head->next = head;
+            if(pre_head){
+                pre_head->next = new_head;
+            }else{
+                result = new_head;
+            }
+            return result;
+        } 
+## 3. 求两个链表的交点   LeetCode 160.Intersection of Two LinkedLists
+
+解题思路:可以利用set集合元素来判断是否有相同的节点，遍历链表A，将A中的节点指针插入set，遍历链表B,将B中的节点地址在set中查找，如果找到，则为交点
+
+        ListNode *geIntersectionNode(ListNode* headA,ListNode* headB){
+            std::set<ListNode*> node_set;
+            while(headA){
+                node_set.insert(headA);
+                headA = headA->next;
+            }
+            while(headB){
+                if(node_set.find(headB) != node_set.end()){
+                    return headB;
+                }
+                headB = headB->next;
+            }
+            return NULL;
+        }
+
+## 4.链表求环  LeetCode 142. Linked List Cycle
+
+解题思路:设计两个指针，一个快，每次走两步，一个慢，每次走一步，两个指针如果能够相遇的话，则证明是有环的。并且，从head出发与从相遇的地方出发，两指针速度一样，相遇后即为环的起点
+
+
