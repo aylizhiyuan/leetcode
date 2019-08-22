@@ -311,6 +311,8 @@
 
 要找到四个指针，一个是逆序段头结点的前驱，一个是逆序的头节点，一个是逆序的尾节点，最后一个是逆序段尾节点的后继，找到这四个指针即可利用链表逆序的第一种方法解题
 
+先找头结点，再继续找尾结点，在找尾结点的遍历过程中，通过new_head逆序后，调整了头结点和尾结点的位置，然后再将他们跟前驱和后继连接起来即可。看起来挺复杂，实际上，只要掌握好了思路，给一定的时间就可以完成这道题了
+
         ListNode* reverseBetween(ListNode*head,int m,int n){
             ListNode *pre_head = NULL;
             ListNode *next_head = NULL;
@@ -366,5 +368,116 @@
 ## 4.链表求环  LeetCode 142. Linked List Cycle
 
 解题思路:设计两个指针，一个快，每次走两步，一个慢，每次走一步，两个指针如果能够相遇的话，则证明是有环的。并且，从head出发与从相遇的地方出发，两指针速度一样，相遇后即为环的起点
+
+        ListNode *detectCycle(ListNode *head){
+            ListNode *fast = head;//快指针
+            ListNode *slow = head;//慢指针
+            ListNode *meet = NULL;
+            while(fast){
+                slow = slow->next;
+                fast = fast->next;
+                if(!fast){
+                    return NULL;
+                }
+                fast = fast->next; //fast再走一步
+                if(fast == slow){
+                    meet = fast;
+                    break;
+                }
+            }
+            if(meet == NULL){
+                return NULL;
+            }
+            while(head && meet){
+                if(head == meet){
+                    return head;
+                }
+                head = head->next;
+                meet = meet->next;
+            }
+            return NULL;
+        }
+
+## 5. 链表划分 LeetCode 86.Partition List
+
+整理思路:我觉得这个题其实就是送分题，感觉只要把思路理清楚了很容易就可以实现代码，首先，设置两个链表，分别存储小于某个数的节点，再用一个链表存储大于等于某个数的节点，最后再将两个节点连接起来即可。
+
+        ListNode * patition(ListNode* head,int x){
+            ListNode less_head(0);
+            ListNode more_head(0);
+            ListNode *less_ptr = &less_head;
+            ListNode *more_ptr = &more_head;
+            //注意这里用的是尾插法
+            //注意跟头插法的区别
+            while(head){
+                if(head->val < x){
+                    less_ptr->next = head;
+                    less_ptr = head;
+                }else{
+                    more_ptr->next  = head;
+                    more_ptr = head;
+                }
+                head = head->next;
+            }
+            less_ptr->next = more_head.next;
+            more_ptr->next = NULL;
+            return less_head.next;
+        }
+
+
+## 6. 合并两个链表  LeetCode 21.Merge Two Sorted Lists
+
+整体思路:合并两个有序的链表思路也简单，两个指针分别遍历两个链表，每遍历一次，比较两个链表节点的值大小，将较小的值先放入最终结果的链表，随后，拥有较小值得链表指针前移，继续跟下一个节点比较，直到比较到链表的末尾，如果这时候有某个链表还每遍历完，则在最后加入到尾部即可
+
+        ListNode *mergeTwoList(ListNode *l1,ListNode *l2){
+            ListNode temp_head(0);//临时链表
+            ListNode *pre = &temp_head;
+            while(l1 && l2){
+                if(l1->val < l2->val){
+                    //如果第二个链表的值比较大
+                    pre->next = l1;
+                    l1 = l1->next;
+                }else{
+                    pre->next = l2;
+                    l2 = l2->next;
+                }
+                pre = pre->next;
+            }
+            //最后别忘了如果还有链表没有遍历完毕的话
+            if(l1){
+                pre->next = l1;
+            }
+            if(l2){
+                pre->next = l2;
+            }
+            return temp_head.next;
+        }
+
+## 7. 合并多个链表 LeetCode 23.Merge k Sorted Lists
+
+整体思路:其实如果直接暴力合并的话肯定是超时的，合并多个不能用简单的思维来看，其实方法有很多种，我个人更倾向于最简单的那种，那就是遍历所有的链表，将链表中的元素放入一个容器中进行排序，排序后再变成链表
+
+    ListNode* mergeKLists(std::vector<ListNode*>& lists) {
+        std::vector<ListNode *> node_vec;        
+        for (int i = 0; i < lists.size(); i++){
+        	ListNode *head = lists[i];
+        	while(head){
+        		node_vec.push_back(head);
+	        	head = head->next;
+	        }
+        }
+        if (node_vec.size() == 0){
+        	return NULL;
+        }        
+        std::sort(node_vec.begin(), node_vec.end(), cmp);
+        for (int i = 1; i < node_vec.size(); i++){
+        	node_vec[i-1]->next = node_vec[i];
+        }
+        node_vec[node_vec.size()-1]->next = NULL;
+        return node_vec[0];
+    }
+
+    
+
 
 
