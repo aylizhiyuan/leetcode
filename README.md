@@ -477,7 +477,258 @@
         return node_vec[0];
     }
 
-    
+# 栈和队列、堆
+
+## 1. 使用队列的方式实现栈 LeetCode 225.Implement Stack using Queues
+
+整体思路: 我们都知道栈是先进后出，而队列是先进先出，我们可以用两个队列来实现栈，例如新元素暂时放入临时队列去，然后将原队列的内容也push到临时队列中去，然后将临时队列里面的元素push会数据队列即可
+
+## 2. 使用栈的方式实现队列 LeetCode 232.Implement Queue using Stacks
+
+整体思路:跟模拟栈的方式类似，但是有区别，我们要先把原数据栈数据push到临时的栈，再push新的元素，这样新的元素就在栈顶了，之后我们再将temp中的数据push到数据栈中
+
+
+## 3.包含Min函数的栈 LeetCode 155.MinStack
+
+整体的思路：设计一个函数，能获取栈中最小的值，但是同时也要考虑元素出栈的时候对最小元素的影响。所以，我们专门设计一个栈存储最小值，当有新的元素入栈的时候，我们就跟栈顶元素比较，如果更小，则入栈，如果没有更小，则依然是重复这个最小值入栈以防止元素出栈造成问题
+
+## 4. 求数组中第K大的树  LeetCode 215.Kth Largest Element in an Array
+
+整理的思路:可以使用堆得概念，维护一个K大小的最小堆，堆中元素个数小于k的时候直接入堆，否则，当堆顶小于新元素的时候，弹出堆顶，将新元素加入堆
+
+    int findKthLargest(std::vector<int>& nums, int k) {
+        std::priority_queue<int, std::vector<int>, std::greater<int> > Q;
+        for (int i = 0; i < nums.size(); i++){
+        	if (Q.size() < k){
+	        	Q.push(nums[i]);
+	        }
+	        else if (Q.top() < nums[i]){
+        		Q.pop();
+	        	Q.push(nums[i]);
+	        }
+        }
+        return Q.top();
+    }
+
+# 贪心算法
+
+贪心的核心思想就是:遵循某种规律，不断的贪心的选取当前最优策略的算法设计方法
+
+## 1. 分糖果 LeetCode 455.Assign Cookies
+
+整体思路：两个数组，对需求因子数组g与糖果大小的数组s进行从大到小的排序，按照从小到大得顺序使用各糖果尝试是否可满足某个孩子，每个糖果只尝试一次，若尝试成功，则换下一个孩子尝试，直到发现没有更多的孩子或者没有更多的糖果
+
+        int findContentChildren(std::vector<int> &g,std::vector<int> &s){
+            std::sort(g.begin(),g.end());
+            std::sort(s.begin(),s.end());
+            int child = 0;
+            int cookie = 0;
+            while(child < g.size() && cookie < s.size()){
+                if(g[child] <= s[cookie]){
+                    child++;
+                }
+                cookie++;
+            }
+            return child;
+        }
+
+## 2. 摇摆序列 LeetCode 376.Wiggle Subsequence
+
+整体思路：求数组中满足摇摆序列的最长子序列的长度,核心思想就是如果有持续的递增和递减的情况下选择首尾元素，这样更可能使得尾部的后一个元素成为摇摆子序列的下一个元素
+
+
+    int wiggleMaxLength(std::vector<int>  &nums){
+            if(nums.size() < 2){
+                return nums.size();
+            }
+            static const int BEGIN = 0;
+            static const int UP = 1;
+            static const int DOWN = 2;
+            int STATE = BEGIN;
+            int max_length = 1;
+            for(int i=1;i<nums.size();i++){
+                switch(STATE){
+                    case BEGIN: 
+                        //说明是上升阶段
+                        if(nums[i-1] < nums[i]){
+                            STATE = UP;
+                            max_length++;
+                        }else if(nums[i-1] > nums[i]){
+                            STATE = DOWN;
+                            max_length++;
+                        }
+                        break;
+                    case UP:
+                        if(nums[i-1] > nums[i]){
+                            STATE = DOWN;
+                            max_length++;
+                        }
+                        break;
+                    case DOWN: 
+                        if(nums[i-1] < nums[i]){
+                            STATE = UP;
+                            max_length++;
+                        }
+                        break;    
+                }
+            }
+            return max_length;
+        }
+
+## 3. 移除K个数字 LeetCode 402.Remove K Digits
+
+整理思路：移除K个数字后，可以得到最小的数，依次遍历每一个数字，查看每个数字的大小，如果对应的数字大于下一个数字的话，我们就可以考虑将它去掉，则得到的数字最小了
+
+
+    std::string removeKdigits(std::string num, int k) {
+    	std::vector<int> S;
+    	std::string result = "";
+        //遍历整个字符串中的每一个数字
+    	for (int i = 0; i < num.length(); i++){
+	    	int number = num[i] - '0';
+            //用每一个数字跟栈顶的数字进行比较
+            //如果栈顶大于这个数字，则让栈顶元素出栈
+	    	while(S.size() != 0 && S[S.size()-1] > number && k > 0){
+	    		S.pop_back();
+	    		k--;
+	    	}
+            //否则的话，我们在栈不空的情况下将字符串中的每个数字压入栈
+	    	if (number != 0 || S.size() != 0){
+	    		S.push_back(number);
+	    	}
+	    }
+        //当去除的数字不符合条件的时候，我们直接删除栈顶的元素即可
+        // 例如12345这种,都不符合条件，直接删除尾部的即可
+	    while(S.size() != 0 && k > 0){
+    		S.pop_back();
+    		k--;
+    	}
+	    for (int i = 0; i < S.size(); i++){
+    		result.append(1, '0' + S[i]);
+    	}
+    	if (result == ""){
+	    	result = "0";
+	    }
+    	return result;
+    }
+
+## 4. 跳跃游戏 LeetCode 55.Jump Game
+
+整理思路：一个数组，从第一个元素开始跳跃最多a[0]步，判断是否可以跳跃到最后一个元素?
+稍微难点的是最多这个概念，也就是说它可以在这个a[0]值得区间进行自由的选择，跳哪个都可以，只要能够满足跳跃到数组的末尾即可。
+
+我们要用一个max_index来记录在每次跳跃中它能跳跃的最大的值，然后遍历整个数组，如果当中出现更大的数就更新max_index的值，通过每跳跃一步就jump++,如果jump > max_index的值了证明我们就无法再跳跃了，否则直到jump == 数组的末尾
+
+    bool canJump(std::vector<int>& nums) {
+        std::vector<int> index;
+        //记录每个数组位置能跳的最远的距离
+        //实际是跳跃的数组的下标位置
+        for (int i = 0; i < nums.size(); i++){
+        	index.push_back(i + nums[i]);
+        }
+        int jump = 0;
+        int max_index = index[0];
+        //如果发现有更大的数字，则更新max_index的值
+        while(jump < index.size() && jump <= max_index){
+        	if (max_index < index[jump]){
+	        	max_index = index[jump];
+	        }
+        	jump++;
+        }
+        //跳到最后了
+        if (jump == index.size()){
+        	return true;
+        }
+        return false;
+    }
+
+## 5.跳跃游戏2  LeetCode 45.Jump Game II
+
+整体思路：确认了可以跳过去，但是求最少跳跃的次数，这次比上次稍微有点复杂了.最少的意义就是什么时候跳最合适了，在一次可跳跃的范围内，找到最远的跳跃距离则跳跃，如果在这个时候没有找到，就只能强制跳跃了
+
+    int jump(std::vector<int>& nums) {
+    	if (nums.size() < 2){
+	    	return 0;
+	    }
+        int current_max_index = nums[0];//当前可跳跃的最远距离
+        int pre_max_max_index = nums[0];//遍历各个位置的时候可以达到的最大的距离
+        int jump_min = 1;
+        for (int i = 1; i < nums.size(); i++){
+        	if (i > current_max_index){
+        		jump_min++;
+	        	current_max_index = pre_max_max_index;
+	        }
+            //如果在遍历过程中发现更大的跳跃距离，则更新pre_max_max_index的值
+        	if (pre_max_max_index < nums[i] + i){
+       			pre_max_max_index = nums[i] + i;
+        	}
+        }
+        return jump_min;
+    }
+
+# 递归和回溯、分治
+
+## 1. 求子集的问题 LeetCode 78. Subsets
+
+解题思路:在所有的子集中，生成各个子集，难点在于选与不选。对于每一个元素，都有放入和不放入两个选择,选择放入该元素，完成后续元素的试探;这时候再选择不放入元素，完成后续元素的试探即可。这里要用到递归的概念，使用递归完成回溯的操作
+
+        class Solution {
+            public: 
+                std::vector<std::vector<int> > subsets(std::vector<int>& nums){
+                    std::vector<std::vector<int> > result; //存放最终结果的数组
+                    std::vector<int> item; //回溯的时候产生各个子集的数组
+                    result.push_back(item);
+                    generate(0,nums,item,result);
+                    return result;
+                }
+            private: 
+                void generate(int i,std::vector<int>& nums,
+                std::vector<int>& item,std::vector<std::vector<int> >& result
+                ){
+                    if(i >= nums.size()){
+                        return;
+                    }
+                    item.push_back(nums[i]);
+                    result.push_back(item);
+                    generate(i+1,nums,item,result);
+                    item.pop_back();
+                    generate(i+1,nums,item,result);
+                }
+        };
+
+## 2.生成括号   LeetCode 22. Generate Parentheses
+
+整体思路:生成括号的可能性都要考虑，这道题可以借鉴第一题的思想，既然我们是要求得所有括号的可能性。左括号与右括号一起放，数量上不能超过N,每放一个左括号，才可以放一个右括号即右括号不可先于左括号放
+
+在递归的时候添加一些限制条件即可将结果求出
+
+    class Solution {
+        public: 
+            std::vector<std::string> generateParenthesis(int n){
+                std::vector<std::string> result;
+                generate("",n,n,result);
+                return result;
+            }
+        private: 
+            void generate(std::string item,int left,int right,std::vector<std::string> &result){
+                if(left == 0 && right == 0){
+                    result.push_back(item);
+                    return;
+                }
+                if(left > 0){
+                    generate(item+'(',left-1,right,result);
+                }
+                if(left < right){
+                    generate(item+')',left,right-1,result);
+                }
+            }    
+    };
+
+
+
+
+
+
 
 
 

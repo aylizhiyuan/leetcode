@@ -1,4 +1,5 @@
 #include <vector>
+#include <stdio.h>
 class Solution {
     public: 
         std::vector<std::vector<int> > subsets(std::vector<int>& nums){
@@ -21,6 +22,7 @@ class Solution {
             item.pop_back();
             generate(i+1,nums,item,result);
         }
+
 };
 int main(){
     std::vector<int> nums;
