@@ -728,6 +728,100 @@
 
 ## 1.路径之和 LeetCode 113.Path Sum II
 
+整体思路:从根节点开始深度遍历二叉树，先序遍历的时候，将节点的值存储入栈，并累加值。当遍历到叶子节点的时候，检查值是否等于sum
+
+再后续遍历的时候，将该节点的值从栈中弹出，path_value也减去相应的节点的值
+
+    class Solution {
+        public:
+            std::vector<std::vector<int> > pathSum(TreeNode* root, int sum) {
+                std::vector<std::vector<int> > result;
+                std::vector<int> path;
+                int path_value = 0;
+                preorder(root, path_value, sum, path, result);
+                return result;
+            }
+        private:
+            void preorder(TreeNode *node, int &path_value, int sum,
+                        std::vector<int> &path,
+                        std::vector<std::vector<int> > &result){
+                if (!node){
+                    return;
+                }
+                //刚访问这个节点的时候
+                path_value += node->val;
+                path.push_back(node->val);
+                if (!node->left && !node->right && path_value == sum){
+                    result.push_back(path);
+                }
+                preorder(node->left, path_value, sum, path, result);
+                //每次遍历完它的左子树的时候
+                preorder(node->right, path_value, sum, path, result);
+                //深度遍历完左右子树后回归到本节点本身的时候，再将本节点删除，依次类推
+                path_value -= node->val;
+                path.pop_back();
+            }
+    };
+
+## 2.最近的公共祖先 LeetCode 236.Lowest Common Ancestor of a Binary Tree
+
+整理思路:求p节点路径，求q节点路径，两条路径中最后一个相同的节点就是公共祖先了
+
+
+
+## 3. 二叉树转链表 LeetCode 114.Flatten Binary Tree to Linked List(solve1)
+
+
+整理思路:非常的简单，将二叉树的节点放入容器中，然后再相连
+
+    class Solution {
+        public:
+            void flatten(TreeNode *root) {
+                std::vector<TreeNode *> node_vec;
+                preorder(root, node_vec);
+                for (int i = 1; i < node_vec.size(); i++){
+                    node_vec[i-1]->left = NULL;
+                    node_vec[i-1]->right = node_vec[i];
+                }
+            }
+        private:
+            void preorder(TreeNode *node, std::vector<TreeNode *> &node_vec){
+                if (!node){
+                    return;
+                }
+                node_vec.push_back(node);
+                preorder(node->left, node_vec);
+                preorder(node->right, node_vec);
+            }
+    };
+
+# 二叉排序树与二分查找
+
+二分查找算法的思想:二分查找，首先假设表中元素是按照升序排列的，将表中间位置的关键字与查找的关键字进行比较，如果两者相等，则查找成功，否则利用中间位置将表分为前后两个字表，重复以上过程....
+
+    bool binary_search(std::vector<int> &sort_array,
+                    int begin, int end, int target){
+        if (begin > end){
+            return false;
+        }
+        int mid = (begin + end) / 2;
+        if (target == sort_array[mid]){
+            return true;
+        }
+        else if (target < sort_array[mid]){
+            return binary_search(sort_array, begin, mid-1, target);
+        }
+        else if (target > sort_array[mid]){
+            return binary_search(sort_array, mid + 1, end, target);
+        }
+    }
+
+## 1. 插入位置 LeetCode 35.Search Insert Position
+
+## 2. 区间查找 LeetCode 34.Search for a Range
+
+## 3. 旋转数组查找 LeetCode 33.Search in Rotated Sorted Array
+
 
 
 
