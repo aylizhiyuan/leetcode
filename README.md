@@ -818,13 +818,312 @@
 
 ## 1. 插入位置 LeetCode 35.Search Insert Position
 
+整体思路:利用二分查找的方式去查找元素，如果找到的话则返回target所在的下标，如果target未出现则返回target应该插入位置的数组下标
+
+
+    int searchInsert(std::vector<int>& nums, int target) {
+            int index = -1;
+            int begin = 0;
+            int end = nums.size() - 1;
+            while (index == -1){
+                int mid = (begin + end) / 2;
+                if (target == nums[mid]){
+                    index = mid;
+                }
+                else if (target < nums[mid]){
+                    if (mid == 0 || target > nums[mid - 1]){
+                        index = mid;
+                    }
+                    end = mid - 1;
+                }
+                else if (target > nums[mid]){
+                    if (mid == nums.size() - 1 || target < nums[mid + 1]){
+                        index = mid + 1;
+                    }
+                    begin = mid + 1;
+                }
+            }
+            return index;
+        }
+
 ## 2. 区间查找 LeetCode 34.Search for a Range
+
+    int left_bound(std::vector<int>& nums, int target){
+        int begin = 0;
+        int end = nums.size() - 1;
+        while(begin <= end){
+            int mid = (begin + end) / 2;
+            if (target == nums[mid]){
+                if (mid == 0 || nums[mid -1] < target){
+                    return mid;
+                }
+                end = mid - 1;
+            }
+            else if (target < nums[mid]){
+                end = mid - 1;
+            }
+            else if (target > nums[mid]){
+                begin = mid + 1;
+            }
+        }
+        return -1;
+    }
+
+    int right_bound(std::vector<int>& nums, int target){
+        int begin = 0;
+        int end = nums.size() - 1;
+        while(begin <= end){
+            int mid = (begin + end) / 2;
+            if (target == nums[mid]){
+                if (mid == nums.size() - 1 || nums[mid + 1] > target){
+                    return mid;
+                }
+                begin = mid + 1;
+            }
+            else if (target < nums[mid]){
+                end = mid - 1;
+            }
+            else if (target > nums[mid]){
+                begin = mid + 1;
+            }
+        }
+        return -1;
+    }
 
 ## 3. 旋转数组查找 LeetCode 33.Search in Rotated Sorted Array
 
+    int search(std::vector<int>& nums, int target) {
+            int begin = 0;
+            int end = nums.size() - 1;
+            while(begin <= end){
+                int mid = (begin + end) / 2;
+                if (target == nums[mid]){
+                    return mid;
+                }
+                else if (target < nums[mid]){
+                    if (nums[begin] < nums[mid]){
+                        if (target >= nums[begin]){
+                            end = mid - 1;
+                        }
+                        else{
+                            begin = mid + 1;
+                        }
+                    }
+                    else if (nums[begin] > nums[mid]){
+                        end = mid -1;
+                    }
+                    else if (nums[begin] == nums[mid]){
+                        begin = mid + 1;
+                    }
+                }
+                else if (target > nums[mid]){
+                    if (nums[begin] < nums[mid]){
+                        begin = mid + 1;
+                    }
+                    else if (nums[begin] > nums[mid]){
+                        if (target >= nums[begin]){
+                            end = mid - 1;
+                        }
+                        else{
+                            begin = mid + 1;
+                        }
+                    }
+                    else if (nums[begin] == nums[mid]){
+                        begin = mid + 1;
+                    }
+                }
+            }
+            return -1;
+        }
 
 
 
+
+# 哈希与字符串
+
+## 1. 最长回文串 LeetCode 409.Longest Palindrome
+
+    int longestPalindrome(std::string s) {
+            int char_map[128] = {0};
+            int max_length = 0;
+            int flag = 0;
+            for (int i = 0; i < s.length(); i++){
+                char_map[s[i]]++;
+            }
+            for (int i = 0; i < 128; i++){
+                if (char_map[i] % 2 == 0){
+                    max_length += char_map[i];
+                }
+                else{
+                    max_length += char_map[i] - 1;
+                    flag = 1;
+                }
+            }
+            return max_length + flag;
+    }
+
+
+## 2. 词语模式  LeetCode 290.Word Pattern
+
+    bool wordPattern(std::string pattern, std::string str) {
+            std::map<std::string, char> word_map;
+            char used[128] = {0};
+            std::string word;
+            int pos = 0;
+            str.push_back(' ');
+            for (int i = 0; i < str.length(); i++){
+                if (str[i] == ' '){
+                    if (pos == pattern.length()){
+                        return false;
+                    }
+                    if (word_map.find(word) == word_map.end()){
+                        if (used[pattern[pos]]){
+                            return false;
+                        }
+                        word_map[word] = pattern[pos];
+                        used[pattern[pos]] = 1;
+                    }
+                    else{
+                        if (word_map[word] != pattern[pos]){
+                            return false;
+                        }
+                    }
+                    word = "";
+                    pos++;
+                }
+                else{
+                    word += str[i];
+                }
+            }
+            if (pos != pattern.length()){
+                return false;
+            }
+            return true;
+    }
+
+## 3. 同字符词语分组  LeetCode 49.Group Anagrams
+
+    std::vector<std::vector<std::string> > groupAnagrams(
+                std::vector<std::string>& strs) {
+            std::map<std::string, std::vector<std::string> > anagram;
+            std::vector<std::vector<std::string> > result;		
+            for (int i = 0; i < strs.size(); i++){
+                std::string str = strs[i];
+                std::sort(str.begin(), str.end());
+                if (anagram.find(str) == anagram.end()){
+                    std::vector<std::string> item;
+                    anagram[str] = item;
+                }
+                anagram[str].push_back(strs[i]);
+            }
+            std::map<std::string, std::vector<std::string> > ::iterator it;
+            for (it = anagram.begin(); it != anagram.end(); it++){
+                result.push_back((*it).second);
+            }
+            return result;
+    }
+
+## 4. 无重复字符的最长子串  LeetCode 3.Longest Substring Without Repeating Characters
+
+    int lengthOfLongestSubstring(std::string s) {
+            int begin = 0;
+            int result = 0;
+            std::string word = "";
+            int char_map[128] = {0};
+            for (int i = 0; i < s.length(); i++){
+                char_map[s[i]]++;
+                if (char_map[s[i]] == 1){
+                    word += s[i];
+                    if (result < word.length()){
+                        result = word.length();
+                    }
+                }
+                else{
+                    while(begin < i && char_map[s[i]] > 1){
+                        //将hash中记录的之前的字符串出现的次数全部减1是为了重新统计
+                        char_map[s[begin]]--;//这个不是很明白？
+                        begin++;
+                    }
+                    word = "";
+                    for (int j = begin; j <= i; j++){
+                        word += s[j];
+                    }
+                }
+            }
+            return result;
+    }
+
+## 5. 最小窗口子串 LeetCode 76. Minimum Window Substring
+
+
+    class Solution {
+    private:
+        bool is_window_ok(int map_s[], int map_t[], std::vector<int> &vec_t){
+            for (int i = 0; i < vec_t.size(); i++){
+                if (map_s[vec_t[i]] < map_t[vec_t[i]]){
+                    return false;
+                }
+            }
+            return true;
+        }
+    public:
+        std::string minWindow(std::string s, std::string t) {
+            const int MAX_ARRAY_LEN = 128;
+            int map_t[MAX_ARRAY_LEN] = {0};
+            int map_s[MAX_ARRAY_LEN] = {0};
+            std::vector<int> vec_t;
+            for (int i = 0; i < t.length(); i++){
+                map_t[t[i]]++;
+            }
+            for (int i = 0; i < MAX_ARRAY_LEN; i++){
+                if (map_t[i] > 0){
+                    vec_t.push_back(i);
+                }
+            }
+            
+            int window_begin = 0;
+            std::string result;
+            for (int i = 0; i < s.length(); i++){
+                map_s[s[i]]++;
+                while(window_begin < i){
+                    char begin_ch = s[window_begin];
+                    if (map_t[begin_ch] == 0){
+                        window_begin++;
+                    }
+                    else if	(map_s[begin_ch] > map_t[begin_ch]){
+                        map_s[begin_ch]--;
+                        window_begin++;
+                    }
+                    else{
+                        break;
+                    }
+                }
+                if (is_window_ok(map_s, map_t, vec_t)){
+                    int new_window_len = i - window_begin + 1;
+                    if (result == "" || result.length() > new_window_len){
+                        result = s.substr(window_begin, new_window_len);
+                    }
+                }
+            }
+            return result;
+        }
+    };
+
+# 动态规划
+
+## 1. 爬楼梯
+
+## 2. 打家劫舍
+
+## 3. 最大字段和
+
+## 4. 找零钱
+
+## 5. 三角形
+
+## 6. 最长上升子序列
+
+## 7. 最小路径和
 
 
 
