@@ -1115,9 +1115,44 @@
 
 ## 1. 爬楼梯
 
+        int climbStairs(int n ){
+            std::vector<int> dp(n+3,0);
+            dp[0] = 1;
+            dp[1] = 2;
+            for(int i=3;i<=n;i++){
+                dp[i] = dp[i-1] + dp[i-2];
+            }
+            return dp[n];
+        }
+这道题的解决方案就是第i阶楼梯的数量 = i-1的数量 + i-2的数量
+
+
+
 ## 2. 打家劫舍
 
+整体思路:这次走的步数就不是固定的1步或者两步了，至少要走2步或者是大于2步，如果获取的值是最大的
+
+        int rob(std::vector<int> &nums){
+            if(nums.size() == 0){
+                return 0;
+            }
+            if(nums.size() == 1){
+                return nums[0];
+            }
+            std::vector<int> dp(nums.size(),0);
+            dp[0] = nums[0];
+            dp[1] = std::max(nums[0],nums[1]);
+            for(int i=2;i<nums.size();i++){
+                dp[i] = std::max(dp[i-1],dp[i-2] + nums[i]);
+            }
+            return dp[nums.size()-1];
+        }
+
+
+
 ## 3. 最大字段和
+
+解题思路:将求n个数的数字的最大字段和，转换成分别求出第1个、第2个、第i个、第n个数字结尾的最大字段和，再找出这n个结果中最大的即可为结果
 
 ## 4. 找零钱
 
