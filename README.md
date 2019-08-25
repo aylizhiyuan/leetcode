@@ -1113,7 +1113,7 @@
 
 # 动态规划
 
-## 1. 爬楼梯
+## 1. 爬楼梯 LeetCode 70.Climbing Stairs
 
         int climbStairs(int n ){
             std::vector<int> dp(n+3,0);
@@ -1128,7 +1128,7 @@
 
 
 
-## 2. 打家劫舍
+## 2. 打家劫舍 LeetCode 198.House Robber
 
 整体思路:这次走的步数就不是固定的1步或者两步了，至少要走2步或者是大于2步，如果获取的值是最大的
 
@@ -1150,9 +1150,22 @@
 
 
 
-## 3. 最大字段和
+## 3. 最大字段和 LeetCode 53.Maximum Subarray
 
 解题思路:将求n个数的数字的最大字段和，转换成分别求出第1个、第2个、第i个、第n个数字结尾的最大字段和，再找出这n个结果中最大的即可为结果
+
+    int maxSubArray(std::vector<int>& nums) {
+    	std::vector<int> dp(nums.size(), 0);
+    	dp[0] = nums[0];
+    	int max_res = dp[0];
+    	for (int i = 1; i < nums.size(); i++){
+	    	dp[i] = std::max(dp[i-1] + nums[i], nums[i]);
+	    	if (max_res < dp[i]){
+	    		max_res = dp[i];
+	    	}
+	    }
+        return max_res;
+    }
 
 ## 4. 找零钱
 
