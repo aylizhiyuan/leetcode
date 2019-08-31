@@ -945,24 +945,32 @@
 
 ## 1. 最长回文串 LeetCode 409.Longest Palindrome
 
-    int longestPalindrome(std::string s) {
+    class Solution {
+    public: 
+        int longestPalindrome(std::string s){
             int char_map[128] = {0};
             int max_length = 0;
-            int flag = 0;
-            for (int i = 0; i < s.length(); i++){
+            int flag = 0;//是否有中心点
+            for(int i=0;i<s.length();i++){
+                //循环遍历每一个字符，并存入哈希表中
                 char_map[s[i]]++;
             }
-            for (int i = 0; i < 128; i++){
-                if (char_map[i] % 2 == 0){
+            for(int i=0;i<128;i++){
+                if(char_map[i] % 2 == 0){
                     max_length += char_map[i];
-                }
-                else{
+                }else{
+                    //如何处理0和奇数的问题
+                    //0 - 1 + flag = 0
+                    //3 - 1 + flag = 3
+                    //如果某个字符出现了3次，那么就丢弃一个
+                    //变成偶数
                     max_length += char_map[i] - 1;
-                    flag = 1;
+                    flag = 1;//反正中心点只能有一个
                 }
             }
             return max_length + flag;
-    }
+        }
+    };
 
 
 ## 2. 词语模式  LeetCode 290.Word Pattern
