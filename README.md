@@ -975,41 +975,47 @@
 
 ## 2. 词语模式  LeetCode 290.Word Pattern
 
-    bool wordPattern(std::string pattern, std::string str) {
-            std::map<std::string, char> word_map;
-            char used[128] = {0};
-            std::string word;
-            int pos = 0;
-            str.push_back(' ');
-            for (int i = 0; i < str.length(); i++){
-                if (str[i] == ' '){
-                    if (pos == pattern.length()){
+        class Solution {
+            public: 
+                bool wordPattern(std::string pattern,std::string str){
+                    std::map<std::string,char> word_map;
+                    char used[128] = {0};
+                    std::string word;
+                    int pos = 0;
+                    str.push_back(' ');
+                    for(int i=0;i<str.length();i++){
+                        if(str[i] == ' '){
+                            if(pos == pattern.length()){
+                                return false;
+                            }
+                            if(word_map.find(word) == word_map.end()){
+                                //这个应该是没有找到这个单词
+                                if(used[pattern[pos]]){
+                                    return false;
+                                }
+                                //例如 word_map[cat] = a
+                                word_map[word] = pattern[pos];
+                                used[pattern[pos]] = 1;
+                            }else{
+                                //这个单词已经出现过了,这时候判断是否相等,比如cat == a 
+                                if(word_map[word] != pattern[pos]){
+                                    return false;
+                                }
+                            }
+                            word = "";
+                            //pos表示的是第几个单词吧，单词的数量,同时也是abbba的指针
+                            pos ++ ;
+                        }else{
+                            //存储一个单词
+                            word += str[i];
+                        }
+                    }
+                    if(pos != pattern.length()){
                         return false;
                     }
-                    if (word_map.find(word) == word_map.end()){
-                        if (used[pattern[pos]]){
-                            return false;
-                        }
-                        word_map[word] = pattern[pos];
-                        used[pattern[pos]] = 1;
-                    }
-                    else{
-                        if (word_map[word] != pattern[pos]){
-                            return false;
-                        }
-                    }
-                    word = "";
-                    pos++;
+                    return true;
                 }
-                else{
-                    word += str[i];
-                }
-            }
-            if (pos != pattern.length()){
-                return false;
-            }
-            return true;
-    }
+        };
 
 ## 3. 同字符词语分组  LeetCode 49.Group Anagrams
 
